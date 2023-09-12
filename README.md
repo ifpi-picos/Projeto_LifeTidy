@@ -39,7 +39,7 @@
 
 ## Tecnologias
 <h4>
-  React
+  React.js
 </h4>
 
 <h4>
