@@ -1,30 +1,29 @@
 //Importações
 const express = require('express');
 const bodyParser = require('body-parser');
-const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');  
+const { sequelize } = require('./models')
 
 //criando servidor local
 const app = express();
 const port = 3000;
 
+//Importando o arquivo de navegação pelas rotas (index.js)
+const routers = require('./api')
+
+//Configuando para manipular dados JSON
+app.use(express.json());
+
+//Configurando para navegar quando a URL padrão for chamada
+app.use('/', routers)
+
+
 //código secreto para o token (substitua por uma chave segura)
-const secretKey = 'x^U!]$zs,P7mOarq2Eo4';
+//const secretKey = 'x^U!]$zs,P7mOarq2Eo4';
 
-// Configurar o Body-parser para lidar com dados JSON
-app.use(bodyParser.json());
-
-// Configurar o pool de conexões com o PostgreSQL
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'lifetidy',
-  password: '02020757',
-  port: '5432',
-});
 
 // Rota para criar um novo usuário
-app.post('/api/usuario', async (req, res) => {
+/*app.post('/api/usuario', async (req, res) => {
     const { nome, email, senha, telefone } = req.body;
   
     if (!nome || !email || !senha || !telefone) {
@@ -74,6 +73,12 @@ app.get('/api/usuarios', async (req, res) => {
       res.status(500).json({ error: 'Erro ao buscar usuários' });
     }
   });
+*/
+
+//Para conectar ao banco 
+sequelize.sync().then(()=>{
+  console.log('conectadado ao banco')
+})
 
 // Avisar se o servidor está rodando é em qual porta
 app.listen(port, () => {
