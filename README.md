@@ -58,6 +58,9 @@
   API Express
 </h4>
 
+<h4>
+  Sequelize
+</h4>
 
 
 
