@@ -9,10 +9,19 @@ class UsuarioService{
     }
 
     async adicionar(usuarioDTO){
+        //Verifica se já existe um email igual ao que vai ser adicionando ao banco de dados
+        const email= await this.usuario.findOne({
+            where: {
+                email: usuarioDTO.email
+            }
+        })
+        if (email != null){
+            throw new Error('Esse email já está cadastrado!')
+        }
         try{
             await this.usuario.create(usuarioDTO)
         } catch(erro){
-            console.erro(erro.message)
+            console.error(erro.message)
             throw erro
         }
     }
