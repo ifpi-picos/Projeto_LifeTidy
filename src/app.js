@@ -75,12 +75,12 @@ app.get('/api/usuarios', async (req, res) => {
   });
 */
 
-//Para conectar ao banco 
+//Aviso que a conexão foi bem sucedida
 sequelize.sync().then(()=>{
   console.log('conectadado ao banco')
 })
 
-// Avisar se o servidor está rodando é em qual porta
+// Avisar se o servidor está rodando e em qual porta.
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });

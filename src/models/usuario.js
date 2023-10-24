@@ -1,3 +1,5 @@
+/*Este arquivo é responsável por definir e exportar um modelo de usuário
+Pode ser usado para interagir com a tabela 'usuario' no banco de dados por meio do Sequelize.*/
 const usuario = (sequelize, DataTypes) => {
     const Usuario = sequelize.define('Usuario', {
         nome:{

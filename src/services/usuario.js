@@ -1,3 +1,4 @@
+//Responsável por fornecer serviços relacionados a usuários, como buscar todos os usuários no banco de dados e adicionar novos usuários. 
 class UsuarioService{
     constructor(UsuarioModel){
         this.usuario = UsuarioModel
@@ -26,5 +27,5 @@ class UsuarioService{
         }
     }
 }
-
+//Exportando
 module.exports = UsuarioService
