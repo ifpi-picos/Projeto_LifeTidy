@@ -8,6 +8,7 @@ const { usuario } = require ('../models')
 const UsuarioService = require('../services/usuario')
 const {body, check, validationResult} = require('express-validator')
 const jwt = require('jsonwebtoken');  
+const verificaToken = require('../middleware/autenticacao')
 
 //Navegação de rotas
 const router = express.Router()
@@ -15,16 +16,16 @@ const router = express.Router()
 //Nova instância da classe UsuarioService como o objeto usuario
 const usuarioService = new UsuarioService(usuario)
 
-// Usando a função /get para retornar todos os usuarios do banco de dados 
+//Rota para retornar todos os usuarios do banco de dados 
 router.get('/', async (req, res) =>{
     const usuarios = await usuarioService.get() 
     res.status(200).json(usuarios)
 });
 
-//Função que usa o metodo post para cadastrar os usuarios no banco de dados 
+//Rota para cadastrar os usuarios no banco de dados 
 router.post('/', 
     //Validações e dos atributos dos usuarios
-    body('nome', 'telefone').not().isEmpty().trim().escape(),
+    body('nome').not().isEmpty().trim().escape(),
     body('email').isEmail().normalizeEmail(),
     check('senha')
         .isLength({min: 8})
@@ -42,6 +43,30 @@ router.post('/',
         res.status(400).send(erro.message)
     }
 });
+//Rota para login
+router.post('/login', async (req, res) => {
+    try {
+        const { email, senha } = req.body;
+        const { token, userData } = await usuarioService.login(email, senha);
+
+        // Configura o cookie com o token
+        res.cookie('token', token, { maxAge: 3600000, httpOnly: true, sameSite: 'strict', secure: true});
+        res.status(200).json({ auth: true, user: userData, message: 'Login bem sucedido!' });
+    } catch (error) {
+        res.status(401).json({ error: error.message });
+    }
+});
+
+//Rota deletar usuario
+router.delete('/apagar', async (req, res) => {
+    const id = req.body.id
+    try {
+        await usuarioService.deletar(id, res)
+    } catch (error) {
+        res.status(400).json("Não foi possível excluir o usuário!")
+    }
+});
 
 // Exportando o router para ser utilizado em outros módulos
-module.exports = router
+module.exports = router 
+ 

@@ -1,6 +1,3 @@
-
-
-
 //Fornece uma forma estruturada de acessar e interagir com o banco de dados e os dados relacionados a usuários.
 
 //Importações

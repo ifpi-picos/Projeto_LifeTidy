@@ -1,3 +1,9 @@
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+SALT = 8
+
 //Responsável por fornecer serviços relacionados a usuários, como buscar todos os usuários no banco de dados e adicionar novos usuários. 
 class UsuarioService{
     constructor(UsuarioModel){
@@ -7,6 +13,33 @@ class UsuarioService{
     async get(){
         const usuario = await this.usuario.findAll()
         return usuario
+    }
+
+    geraToken(usuario) {
+        const token = jwt.sign({id:usuario.id}, process.env.JWT_SECRET, {expiresIn:'1h'})
+        return token;
+    }
+
+    async login(email, senha) {
+        const usuario = await this.usuario.findOne({
+            where: {
+                email: email
+            }
+        });
+
+        if (usuario === null) {
+            throw new Error('Email incorreto');
+        }
+
+        const senhainvalida = bcrypt.compareSync(senha, usuario.senha);
+
+        if (!senhainvalida) {
+            throw new Error('Senha incorreta');
+        }
+
+        const {nome} = usuario
+        const token = this.geraToken(usuario);
+        return { token, userData: { nome, email } }
     }
 
     async adicionar(usuarioDTO){
@@ -20,12 +53,32 @@ class UsuarioService{
             throw new Error('Esse email já está cadastrado!')
         }
         try{
+            usuarioDTO.senha = bcrypt.hashSync(usuarioDTO.senha, SALT)
             await this.usuario.create(usuarioDTO)
         } catch(erro){
             console.error(erro.message)
             throw erro
         }
     }
+
+    async deletar(id, res) {
+        try {
+            const usuario = await this.usuario.findOne({
+                where: {
+                    id: id
+                }
+            });
+    
+            if (usuario) {
+                await usuario.destroy();
+                res.status(200).json("Usuário excluído com sucesso.");
+            } else {
+                res.status(404).json("Usuário não encontrado.");
+            }
+        } catch (error) {
+            res.status(500).json("Não foi possível excluir, tente novamente!");
+        }
+    }
 }
-//Exportando
-module.exports = UsuarioService
+        //Exportando
+        module.exports = UsuarioService
