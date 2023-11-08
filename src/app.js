@@ -27,6 +27,7 @@ const routers = require('./api')
 //Configuando para manipular dados JSON
 app.use(express.json())
 
+
 //Configurando para navegar quando a URL padrão for chamada
 app.use('/', routers)
 

@@ -1,4 +1,4 @@
-/*Esse arquivo é responsável por definir rotas relacionadas a usuários
+    /*Esse arquivo é responsável por definir rotas relacionadas a usuários
 Realizar validações de dados, interagir com serviços para realizar operações no banco de dados
 Exportar o objeto router para uso em outros módulos do seu aplicativo*/
 
@@ -9,8 +9,6 @@ const UsuarioService = require('../services/usuario')
 const {body, check, validationResult} = require('express-validator')
 const jwt = require('jsonwebtoken');  
 const verificaToken = require('../middleware/autenticacao')
-
-//Navegação de rotas
 const router = express.Router()
 
 //Nova instância da classe UsuarioService como o objeto usuario
@@ -20,7 +18,7 @@ const usuarioService = new UsuarioService(usuario)
 router.get('/', async (req, res) =>{
     const usuarios = await usuarioService.get() 
     res.status(200).json(usuarios)
-});
+})
 
 //Rota para cadastrar os usuarios no banco de dados 
 router.post('/', 
@@ -67,6 +65,48 @@ router.delete('/apagar', async (req, res) => {
     }
 });
 
+//Mudar nome de úsuario
+router.put('/mudarNome', async (req, res)=>{
+    try{
+        const {id, novoNome} = req.body
+        const usuario = await usuarioService.mudarNome(id, novoNome)
+        res.status(200).json({usuario, menssage: 'Nome alterado com sucesso!'})
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+})
+
+//Mudar email
+
+router.put('/mudarEmail', async (req, res)=>{
+    try{
+        const {id, novoEmail} = req.body
+        const usuario = await usuarioService.mudarEmail(id, novoEmail)
+        res.status(200).json({usuario, menssage: 'Email alterado com sucesso!'})
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+})
+
+router.put('/mudarTelefone', async (req, res)=>{
+    try{
+        const {id, novoTelefone} = req.body
+        const usuario = await usuarioService.mudarTelefone(id, novoTelefone)
+        res.status(200).json({usuario, menssage: 'Telefone alterado com sucesso!'})
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+})
+
+router.put('/mudarSenha', async (req, res)=>{
+    try{
+        const {id, senhaAntiga, novaSenha} = req.body   
+        const usuario = await usuarioService.mudarSenha(id, senhaAntiga, novaSenha)
+        res.status(200).json({usuario, menssage: 'Senha alterada com sucesso!'})
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+})
 // Exportando o router para ser utilizado em outros módulos
 module.exports = router 
  

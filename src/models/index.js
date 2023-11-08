@@ -4,14 +4,19 @@
 const sequelize = require('../config/sequelize')
 const Sequelize = require('sequelize')
 const Usuario = require('./usuario')
+const Tarefa = require('./tarefa')
+const Item = require('./item')
 
-//Criando um modelo de usuario para realizar operações relacionadas a usuarios no banco de dados 
+//Criando um modelos para realizar operações no banco de dados 
 const usuario = Usuario(sequelize, Sequelize.DataTypes )
-
+const tarefa = Tarefa(sequelize, Sequelize.DataTypes)
+const item = Item (sequelize, Sequelize.DataTypes)
 //Criando um objeto com duas propriedades para exportar e usar em outros módulos da plataforma 
 const db = {
     usuario, 
-    sequelize
+    tarefa,
+    sequelize,
+    item,
 }
 //Exportando
 module.exports = db

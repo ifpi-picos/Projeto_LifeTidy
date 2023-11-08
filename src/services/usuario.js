@@ -79,6 +79,63 @@ class UsuarioService{
             res.status(500).json("Não foi possível excluir, tente novamente!");
         }
     }
+
+    async mudarNome(id, novoNome) {
+        const usuario = await this.usuario.findByPk(id);
+    
+        if (!usuario) {
+            throw new Error('Usuário não encontrado');
+        }
+    
+        usuario.nome = novoNome;
+        await usuario.save();
+    
+        return usuario;
+    }
+
+    async mudarEmail(id, novoEmail) {
+        const usuario = await this.usuario.findByPk(id);
+    
+        if (!usuario) {
+            throw new Error('Usuário não encontrado');
+        }
+    
+        usuario.email = novoEmail;
+        await usuario.save();
+    
+        return usuario;
+    }
+
+    async mudarTelefone(id, novoTelefone) {
+        const usuario = await this.usuario.findByPk(id);
+    
+        if (!usuario) {
+            throw new Error('Usuário não encontrado');
+        }
+    
+        usuario.telefone = novoTelefone;
+        await usuario.save();
+    
+        return usuario;
+    }
+
+    async mudarSenha(id, senhaAntiga, novaSenha) {
+        const usuario = await this.usuario.findByPk(id);
+    
+        if (!usuario) {
+            throw new Error('Usuário não encontrado');
+        }
+
+        const senhainvalida = bcrypt.compareSync(senhaAntiga, usuario.senha)
+        if (!senhainvalida) {
+            throw new Error('Senha incorreta');
+        }
+
+        usuario.senha = bcrypt.hashSync(novaSenha, SALT)
+        await usuario.save()
+    
+        return usuario;
+    }
 }
-        //Exportando
-        module.exports = UsuarioService
+//Exportando
+module.exports = UsuarioService
