@@ -24,6 +24,10 @@ const item = (sequelize, DataTypes) =>{
             type:DataTypes.FLOAT,
         },
 
+        status:{
+            type:DataTypes.STRING,
+        },
+
     }, {
         createdAt: false,
         updatedAt: false,
@@ -32,9 +36,9 @@ const item = (sequelize, DataTypes) =>{
         foreignKey: false
     })
     Item.associate = function(models) {
-      Item.belongsTo(models.Tarefa, {
-        foreignKey: 'id_tarefa',
-        as: 'tarefa'
+      Item.belongsTo(models.Tarefa_list, {
+        foreignKey: 'id_tarefa_list',
+        as: 'tarefa_list'
       });
     };
     return Item

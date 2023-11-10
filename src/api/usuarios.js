@@ -23,7 +23,7 @@ router.get('/', async (req, res) =>{
 //Rota para cadastrar os usuarios no banco de dados 
 router.post('/', 
     //Validações e dos atributos dos usuarios
-    body('nome').not().isEmpty().trim().escape(),
+    body('nome_usuario').not().isEmpty().trim().escape(),
     body('email').isEmail().normalizeEmail(),
     check('senha')
         .isLength({min: 8})
@@ -33,9 +33,9 @@ router.post('/',
     if (!erros.isEmpty()){
         return res.status(400).json({erros: erros.array()})
     }
-    const {nome, email, senha, telefone} = req.body;
+    const {nome_usuario, email, senha, telefone} = req.body;
     try{
-        await usuarioService.adicionar({nome, email, senha, telefone})
+        await usuarioService.adicionar({nome_usuario, email, senha, telefone})
         res.status(201).send("Usuário adicionado com sucesso")  
     } catch (erro){
         res.status(400).send(erro.message)

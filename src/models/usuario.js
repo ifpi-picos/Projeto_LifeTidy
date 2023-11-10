@@ -7,7 +7,7 @@ const usuario = (sequelize, DataTypes) => {
             autoIncrement: true,
             primaryKey: true,
         },
-        nome:{
+        nome_usuario:{
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -37,7 +37,13 @@ const usuario = (sequelize, DataTypes) => {
     Usuario.associate = function(models) {
         Usuario.hasMany(models.Tarefa, {
           foreignKey: 'id_usuario',
-          as: 'tarefas'
+          as: 'tarefa'
+        })
+      }
+    Usuario.associate = function(models) {
+        Usuario.hasMany(models.Tarefa, {
+          foreignKey: 'id_usuario',
+          as: 'tarefa_list'
         })
       }
     return Usuario

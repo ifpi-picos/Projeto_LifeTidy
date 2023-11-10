@@ -1,7 +1,7 @@
 //Modelo da dados da tabela tarefas
-const tarefa = (sequelize, DataTypes) =>{
-    const Tarefa = sequelize.define('Tarefa',{
-        id_tarefa:{
+const tarefa_list = (sequelize, DataTypes) =>{
+    const Tarefa_list = sequelize.define('Tarefa_list',{
+        id_tarefa_list:{
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey:true,
@@ -12,16 +12,8 @@ const tarefa = (sequelize, DataTypes) =>{
             allowNull: false
         },
 
-        nome_tarefa:{
+        nome_lista:{
             type: DataTypes.STRING,
-        },
-
-        descricao:{
-            type: DataTypes.STRING,
-        },
-
-        categoria:{
-            type: DataTypes.STRING
         },
 
         data_inicio:{
@@ -52,34 +44,26 @@ const tarefa = (sequelize, DataTypes) =>{
             type: DataTypes.TIME,
         },
 
-        importancia:{
-            type: DataTypes.STRING
-        },
-
-        status:{
-            type:DataTypes.STRING,
-        },
-
     }, {
         createdAt: false,
         updatedAt: false,
         id:false,
-        tableName: 'tarefa',
+        tableName: 'tarefa_list',
         foreignKey: false
     })
 
-    Tarefa.associate = function(models) {
-        Tarefa.belongsTo(models.Usuario, {
+    Tarefa_list.associate = function(models) {
+        Tarefa_list.belongsTo(models.Usuario, {
           foreignKey: 'id_usuario',
           as: 'usuario'
         });
-        Tarefa.hasMany(models.Item, {
-          foreignKey: 'id_tarefa',
+        Tarefa_list.hasMany(models.Item, {
+          foreignKey: 'id_tarefa_list',
           as: 'itens'
         });
       };
     
-    return Tarefa
+    return Tarefa_list
 }
 
-module.exports = tarefa
+module.exports = tarefa_list

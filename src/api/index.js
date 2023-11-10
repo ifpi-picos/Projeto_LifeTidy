@@ -7,6 +7,7 @@ const express = require('express')
 const usuariosRouter = require('./usuarios')
 const tarefasRouter = require('./tarefas')
 const itensRouter = require('./itens')
+const tarefaListRouter = require('./tarefaList')
 
 //Criando um sistema de navegação com o objeto router 
 const router = express.Router()
@@ -18,6 +19,7 @@ router.get('/', (req, res)=>{
 router.use('/usuarios', usuariosRouter)
 router.use('/tarefas', tarefasRouter)
 router.use('/itens', itensRouter)
+router.use('/tarefaList', tarefaListRouter)
 
 // Exportando o router para ser utilizado em outros módulos
 module.exports = router;

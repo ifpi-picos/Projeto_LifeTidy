@@ -65,7 +65,7 @@ class UsuarioService{
         try {
             const usuario = await this.usuario.findOne({
                 where: {
-                    id: id
+                    id_usuario: id
                 }
             });
     
@@ -87,7 +87,7 @@ class UsuarioService{
             throw new Error('Usuário não encontrado');
         }
     
-        usuario.nome = novoNome;
+        usuario.nome_usuario = novoNome;
         await usuario.save();
     
         return usuario;
