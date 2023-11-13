@@ -15,13 +15,13 @@ const router = express.Router()
 const usuarioService = new UsuarioService(usuario)
 
 //Rota para retornar todos os usuarios do banco de dados 
-router.get('/', async (req, res) =>{
+router.get('/mostrarUsuarios', async (req, res) =>{
     const usuarios = await usuarioService.get() 
     res.status(200).json(usuarios)
 })
 
 //Rota para cadastrar os usuarios no banco de dados 
-router.post('/', 
+router.post('/cadastrar', 
     //Validações e dos atributos dos usuarios
     body('nome_usuario').not().isEmpty().trim().escape(),
     body('email').isEmail().normalizeEmail(),
@@ -55,43 +55,51 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.get('/buscarNome', verificaToken, async (req, res)=>{
+    try{
+        const usuarioNome = await usuarioService.buscarNome(req)
+        res.status(200).json({usuarioNome, message: "Nome do usuário encontrado"})
+    }catch(erro){
+        res.status(500).json("Não foi possivel acessar o nome do usuário")
+    }
+})
 //Rota deletar usuario
-router.delete('/apagar', async (req, res) => {
-    const id = req.body.id
+router.delete('/apagar', verificaToken , async (req, res) => {
     try {
-        await usuarioService.deletar(id, res)
+        await usuarioService.deletar(req,res)
     } catch (error) {
         res.status(400).json("Não foi possível excluir o usuário!")
     }
 });
 
 //Mudar nome de úsuario
-router.put('/mudarNome', async (req, res)=>{
+router.put('/mudarNome', verificaToken, async (req, res)=>{
     try{
-        const {id, novoNome} = req.body
-        const usuario = await usuarioService.mudarNome(id, novoNome)
-        res.status(200).json({usuario, menssage: 'Nome alterado com sucesso!'})
-    }catch(error){
-        res.status(400).json({error: error.message})
+        const novoNome = req.body
+        const usuario = await usuarioService.mudarNome(req, novoNome, res)
+    }catch(erro){
+        res.status(400).json('Nome não alterado!')
     }
+    
+    
 })
 
 //Mudar email
 
 router.put('/mudarEmail', async (req, res)=>{
     try{
-        const {id, novoEmail} = req.body
-        const usuario = await usuarioService.mudarEmail(id, novoEmail)
+        const {novoEmail} = req.body
+        const usuario = await usuarioService.mudarEmail(req, novoEmail)
         res.status(200).json({usuario, menssage: 'Email alterado com sucesso!'})
-    }catch(error){
-        res.status(400).json({error: error.message})
+    }catch(erro){
+        res.status(400).json({error: erro.message})
     }
 })
 
 router.put('/mudarTelefone', async (req, res)=>{
     try{
-        const {id, novoTelefone} = req.body
-        const usuario = await usuarioService.mudarTelefone(id, novoTelefone)
+        const {novoTelefone} = req.body
+        const usuario = await usuarioService.mudarTelefone(req, novoTelefone)
         res.status(200).json({usuario, menssage: 'Telefone alterado com sucesso!'})
     }catch(error){
         res.status(400).json({error: error.message})
@@ -100,8 +108,8 @@ router.put('/mudarTelefone', async (req, res)=>{
 
 router.put('/mudarSenha', async (req, res)=>{
     try{
-        const {id, senhaAntiga, novaSenha} = req.body   
-        const usuario = await usuarioService.mudarSenha(id, senhaAntiga, novaSenha)
+        const {senhaAntiga, novaSenha} = req.body   
+        const usuario = await usuarioService.mudarSenha(req, senhaAntiga, novaSenha)
         res.status(200).json({usuario, menssage: 'Senha alterada com sucesso!'})
     }catch(error){
         res.status(400).json({error: error.message})

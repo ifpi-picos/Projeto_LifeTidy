@@ -16,7 +16,7 @@ class UsuarioService{
     }
 
     geraToken(usuario) {
-        const token = jwt.sign({id:usuario.id}, process.env.JWT_SECRET, {expiresIn:'1h'})
+        const token = jwt.sign({id:usuario.id_usuario}, process.env.JWT_SECRET, {expiresIn:'1h'})
         return token;
     }
 
@@ -35,8 +35,7 @@ class UsuarioService{
 
         if (!senhainvalida) {
             throw new Error('Senha incorreta');
-        }
-
+        }  
         const {nome} = usuario
         const token = this.geraToken(usuario);
         return { token, userData: { nome, email } }
@@ -60,18 +59,37 @@ class UsuarioService{
             throw erro
         }
     }
-
-    async deletar(id, res) {
+    async buscarNome(req){
+        try{
+            const userId = req.userId
+            const usuario = await this.usuario.findOne({
+                where:{
+                    id_usuario:userId
+                } 
+            })
+            if (usuario){
+                const usuarioNome = usuario.nome_usuario
+                return usuarioNome
+            }else{
+                throw new Error('Usuário não encontrado.')
+            }
+        }catch(error){
+            throw new Error("Não foi possível encontrar usuário");
+        }
+    }
+    async deletar(req, res) {
         try {
+            const userId = req.userId;
+
             const usuario = await this.usuario.findOne({
                 where: {
-                    id_usuario: id
+                    id_usuario: userId
                 }
             });
     
             if (usuario) {
                 await usuario.destroy();
-                res.status(200).json("Usuário excluído com sucesso.");
+                res.status(200).json("Usuário excluído com sucesso.")
             } else {
                 res.status(404).json("Usuário não encontrado.");
             }
@@ -80,21 +98,26 @@ class UsuarioService{
         }
     }
 
-    async mudarNome(id, novoNome) {
-        const usuario = await this.usuario.findByPk(id);
-    
-        if (!usuario) {
-            throw new Error('Usuário não encontrado');
+    async mudarNome(req, novoNomeObj, res) {
+        try{
+            const userId = req.userId
+            const novoNome = novoNomeObj.novoNome;
+            const usuario = await this.usuario.findByPk(userId);
+
+            if (!usuario) {
+                throw new Error('Usuário não encontrado');
+            }
+            usuario.nome_usuario = novoNome;
+            await usuario.save()
+            res.status(200).json("Nome do usuário alterado com sucesso.")
+        } catch(error){
+            res.status(400).json("Não foi possível editar, tente novamente!");
         }
-    
-        usuario.nome_usuario = novoNome;
-        await usuario.save();
-    
-        return usuario;
     }
 
-    async mudarEmail(id, novoEmail) {
-        const usuario = await this.usuario.findByPk(id);
+    async mudarEmail(req, novoEmail) {
+        const userId = req.userId
+        const usuario = await this.usuario.findByPk(userId);
     
         if (!usuario) {
             throw new Error('Usuário não encontrado');
@@ -106,8 +129,9 @@ class UsuarioService{
         return usuario;
     }
 
-    async mudarTelefone(id, novoTelefone) {
-        const usuario = await this.usuario.findByPk(id);
+    async mudarTelefone(req, novoTelefone) {
+        const userId = req.userId
+        const usuario = await this.usuario.findByPk(userId);
     
         if (!usuario) {
             throw new Error('Usuário não encontrado');
@@ -119,8 +143,10 @@ class UsuarioService{
         return usuario;
     }
 
-    async mudarSenha(id, senhaAntiga, novaSenha) {
-        const usuario = await this.usuario.findByPk(id);
+    async mudarSenha(req, senhaAntiga, novaSenha) {
+        const userId = req.userId
+        console.log(userId)
+        const usuario = await this.usuario.findByPk(userId);
     
         if (!usuario) {
             throw new Error('Usuário não encontrado');

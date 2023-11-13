@@ -17,14 +17,15 @@ class TarefaListService{
         }
     }
 
-    async buscarLista(id){
+    async buscarLista(req){
         try{
-            const lista = await this.tarefa_list.findAll({
+            const userId = req.userId;
+            const listas = await this.tarefa_list.findAll({
                 where:{
-                    id_usuario:id
+                    id_usuario:userId
                 }
             })
-            return lista
+            return listas
         }catch(error){
             console.log(error.mensage)
             throw error

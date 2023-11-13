@@ -6,7 +6,7 @@ const { sequelize } = require('./models')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 require('dotenv').config()
-
+const {verificaToken} = require('./middleware/autenticacao')
 //criando servidor local
 const app = express()
 const port = process.env.PORT
@@ -27,6 +27,16 @@ const routers = require('./api')
 //Configuando para manipular dados JSON
 app.use(express.json())
 
+app.all(`${process.env.API_BASE}*`, (req, res, next)=>{
+  const rotasPublicas = config.PUBLIC_ROUTES
+  for (let i = 0; i < rotasPublicas.length; i += 1) {
+    if (req.path === rotasPublicas[i]) {
+      return next()
+    }
+  }
+  verificaToken(req, res, next)
+  
+})
 
 //Configurando para navegar quando a URL padrão for chamada
 app.use('/', routers)

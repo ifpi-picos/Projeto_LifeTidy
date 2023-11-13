@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { tarefa_list }= require('../models')
 const TarefaListService = require('../services/tarefaList')
+const verificarToken = require("../middleware/autenticacao")
 
 const tarefaListService = new TarefaListService(tarefa_list)
 
@@ -17,10 +18,9 @@ router.post('/adicionarLista' , async (req, res) =>{
     }
 })
 
-router.get('/buscarLista', async(req, res ) =>{
-    const {id} = req.body
+router.get('/buscarListas', verificarToken, async(req, res ) =>{
     try{
-        const listas = await tarefaListService.buscarLista(id)
+        const listas = await tarefaListService.buscarLista(req,res)
         res.status(200).json(listas)
     }catch(erro){
         res.status(400).json('Erro ao buscar tarefas')

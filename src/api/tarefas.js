@@ -1,6 +1,7 @@
 const express = require('express')
 const { tarefa } = require('../models')
 const TarefaService = require('../services/tarefa')
+const verificarToken = require('../middleware/autenticacao')
 const router = express.Router()
 
 const tarefaService = new TarefaService(tarefa)
@@ -33,10 +34,10 @@ router.post('/adicionar', async (req, res) => {
 //     }
 // });
 
-router.get('/buscarTarefas', async(req, res ) =>{
-    const {id} = req.body
+router.get('/buscarTarefas', verificarToken, async(req, res ) =>{
+
     try{
-        const tarefas = await tarefaService.buscarTarefa(id)
+        const tarefas = await tarefaService.buscarTarefa(req,res)
         res.status(200).json(tarefas)
     }catch(erro){
         res.status(400).json('Erro ao buscar tarefas')

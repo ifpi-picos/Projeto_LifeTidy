@@ -17,11 +17,12 @@ class TarefaService{
         }
     }
 
-    async buscarTarefa(id){
+    async buscarTarefa(req){
         try{
+            const userId = req.userId;
             const tarefa = await this.tarefa.findAll({
                 where:{
-                    id_usuario: id
+                    id_usuario: userId
                 }
             })
             return tarefa
