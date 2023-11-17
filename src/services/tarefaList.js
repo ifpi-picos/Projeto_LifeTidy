@@ -8,8 +8,10 @@ class TarefaListService{
         return tarefa
     }
 
-    async adicinarLista(ListaDTO){
+    async adicinarLista(ListaDTO, req){
+        const userId = req.userId
         try{
+            ListaDTO.id_usuario = userId
             await this.tarefa_list.create(ListaDTO)
         }catch(error){
             console.log(error.message)

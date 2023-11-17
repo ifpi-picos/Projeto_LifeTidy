@@ -25,7 +25,14 @@ const usuario = (sequelize, DataTypes) => {
         telefone:{
             type: DataTypes.STRING,
             allowNull: false
+        },
+        token_reset:{
+            type: DataTypes.STRING
+        },
+        token_reset_validade:{
+            type:DataTypes.DATE
         }
+
     }, {
         createdAt: false,
         updatedAt: false,

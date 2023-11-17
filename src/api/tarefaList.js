@@ -6,19 +6,17 @@ const verificarToken = require("../middleware/autenticacao")
 
 const tarefaListService = new TarefaListService(tarefa_list)
 
-router.post('/adicionarLista' , async (req, res) =>{
-    const {id_usuario, nome_lista, data_inicio, data_fim, hora_inicio, hora_fim} = req.body
+router.post('/adicionarLista', async (req, res) =>{
+    const {nome_lista, data_inicio, data_fim, hora_inicio, hora_fim} = req.body
     try{
-        await tarefaListService.adicinarLista({
-        id_usuario, nome_lista, data_inicio, data_fim, hora_inicio, hora_fim
-        })
+        await tarefaListService.adicinarLista({nome_lista, data_inicio, data_fim, hora_inicio, hora_fim}, req)
         res.status(200).json('Lista adicionada com sucesso')
     }catch(erro){
         res.status(400).json('Erro ao adicionar lista')
     }
 })
 
-router.get('/buscarListas', verificarToken, async(req, res ) =>{
+router.get('/buscarListas', async(req, res ) =>{
     try{
         const listas = await tarefaListService.buscarLista(req,res)
         res.status(200).json(listas)

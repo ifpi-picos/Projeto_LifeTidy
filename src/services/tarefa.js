@@ -8,24 +8,37 @@ class TarefaService{
         return tarefa 
     }
 
-    async adicionarTaref(tarefaDTO){
+    async adicionarTaref(tarefaDTO, req){
+        const userId = req.userId
         try {
+            for (let prop in tarefaDTO) {
+                if (tarefaDTO[prop] === undefined) {
+                    if (prop === 'data_inicio' || prop === 'data_fim') {
+                        tarefaDTO[prop] = '0000/00/00';
+                    } else if (prop === 'hora_inicio' || prop === 'hora_fim') {
+                        tarefaDTO[prop] = '00:00';
+                    } else {
+                        tarefaDTO[prop] = '';
+                    }
+                }
+            }
+            tarefaDTO.id_usuario = userId
             await this.tarefa.create(tarefaDTO)
         } catch (erro){
             console.error(erro.message)
-            throw erro 
+            throw erro
         }
     }
 
     async buscarTarefa(req){
         try{
             const userId = req.userId;
-            const tarefa = await this.tarefa.findAll({
+            const tarefas = await this.tarefa.findAll({
                 where:{
                     id_usuario: userId
                 }
             })
-            return tarefa
+            return tarefas
         }catch(erro){
             console.error(erro.message)
             throw erro

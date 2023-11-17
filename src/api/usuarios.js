@@ -24,7 +24,7 @@ router.get('/mostrarUsuarios', async (req, res) =>{
 router.post('/cadastrar', 
     //Validações e dos atributos dos usuarios
     body('nome_usuario').not().isEmpty().trim().escape(),
-    body('email').isEmail().normalizeEmail(),
+    body('email').isEmail().withMessage('Email inválido').normalizeEmail(),
     check('senha')
         .isLength({min: 8})
         .withMessage('Essa senha deve ter pelo menos 8 caracteres'),
@@ -33,12 +33,12 @@ router.post('/cadastrar',
     if (!erros.isEmpty()){
         return res.status(400).json({erros: erros.array()})
     }
-    const {nome_usuario, email, senha, telefone} = req.body;
+    const {nome_usuario, email, senha, telefone,} = req.body;
     try{
         await usuarioService.adicionar({nome_usuario, email, senha, telefone})
         res.status(201).send("Usuário adicionado com sucesso")  
     } catch (erro){
-        res.status(400).send(erro.message)
+        res.status(400).json(erro.message)
     }
 });
 //Rota para login
@@ -49,13 +49,13 @@ router.post('/login', async (req, res) => {
 
         // Configura o cookie com o token
         res.cookie('token', token, { maxAge: 3600000, httpOnly: true, sameSite: 'strict', secure: true});
-        res.status(200).json({ auth: true, user: userData, message: 'Login bem sucedido!' });
+        res.status(200).json({ auth: true, user: userData, Token:token, message: 'Login bem sucedido!' });
     } catch (error) {
         res.status(401).json({ error: error.message });
     }
 });
 
-router.get('/buscarNome', verificaToken, async (req, res)=>{
+router.get('/buscarNome', async (req, res)=>{
     try{
         const usuarioNome = await usuarioService.buscarNome(req)
         res.status(200).json({usuarioNome, message: "Nome do usuário encontrado"})
@@ -73,7 +73,7 @@ router.delete('/apagar', verificaToken , async (req, res) => {
 });
 
 //Mudar nome de úsuario
-router.put('/mudarNome', verificaToken, async (req, res)=>{
+router.put('/mudarNome', async (req, res)=>{
     try{
         const novoNome = req.body
         const usuario = await usuarioService.mudarNome(req, novoNome, res)
@@ -86,10 +86,12 @@ router.put('/mudarNome', verificaToken, async (req, res)=>{
 
 //Mudar email
 
-router.put('/mudarEmail', async (req, res)=>{
+router.put('/mudarEmail',
+    body('novoEmail').isEmail().normalizeEmail(),
+    async (req, res)=>{
     try{
-        const {novoEmail} = req.body
-        const usuario = await usuarioService.mudarEmail(req, novoEmail)
+        const {novoEmail, senha} = req.body
+        const usuario = await usuarioService.mudarEmail(req, novoEmail, senha)
         res.status(200).json({usuario, menssage: 'Email alterado com sucesso!'})
     }catch(erro){
         res.status(400).json({error: erro.message})
@@ -106,7 +108,11 @@ router.put('/mudarTelefone', async (req, res)=>{
     }
 })
 
-router.put('/mudarSenha', async (req, res)=>{
+router.put('/mudarSenha',
+    check('novaSenha')
+    .isLength({min: 8})
+    .withMessage('Essa senha deve ter pelo menos 8 caracteres'),
+    async (req, res)=>{
     try{
         const {senhaAntiga, novaSenha} = req.body   
         const usuario = await usuarioService.mudarSenha(req, senhaAntiga, novaSenha)
@@ -115,6 +121,37 @@ router.put('/mudarSenha', async (req, res)=>{
         res.status(400).json({error: error.message})
     }
 })
+
+router.post('/esqueceuSenha', async(req, res) =>{
+    const {email} = req.body
+    try{
+        await usuarioService.buscarUsuario(email)
+        res.status(200).json('Um email foi enviado para seu endereço de email!')
+    }catch(erro){
+        res.status(400).json('Não foi possível recuperar a senha!')
+    }
+})
+
+router.post('/recuperacao/:token', async(req, res) => {
+    try {
+        const { token } = req.params;
+        await usuarioService.recuperacaoValidar(token);
+        //res.render('recuperacao', { token });
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+})
+
+router.put('/recuperacao', async (req, res) => {
+    const { token, novaSenha } = req.body;  
+    try {
+        const usuario = await usuarioService.recuperacaoMudar(token, novaSenha);
+        res.status(200).send('Senha resetada com sucesso!');
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+});
+
 // Exportando o router para ser utilizado em outros módulos
 module.exports = router 
  

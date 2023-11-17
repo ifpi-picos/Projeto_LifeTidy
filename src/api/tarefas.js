@@ -11,13 +11,13 @@ router.get('/', async (req, res) => {
     res.status(200).json(tarefa)
 })
 
-router.post('/adicionar', async (req, res) => {
+router.post('/adicionar', verificarToken, async (req, res) => {
     // delete req.body.id_tarefa;
 
     // const novaTarefa = await tarefa.create(req.body);
-    const {id_usuario, nome_tarefa, descricao, categoria, data_inicio, data_fim, hora_inicio, hora_fim, importancia, status} = req.body
+    const {nome_tarefa, descricao, categoria, data_inicio, data_fim, hora_inicio, hora_fim, importancia, status} = req.body
     try{
-        await tarefaService.adicionarTaref({id_usuario, nome_tarefa, descricao, categoria, data_inicio, data_fim, hora_inicio, hora_fim, importancia, status}) 
+        await tarefaService.adicionarTaref({nome_tarefa, descricao, categoria, data_inicio, data_fim, hora_inicio, hora_fim, importancia, status}, req) 
         res.status(201).send('Tarefa adicionada com sucesso')
     } catch (erro){
         res.status(400).send(erro.message)
@@ -34,13 +34,13 @@ router.post('/adicionar', async (req, res) => {
 //     }
 // });
 
-router.get('/buscarTarefas', verificarToken, async(req, res ) =>{
+router.get('/buscarTarefas', async(req, res ) =>{
 
     try{
         const tarefas = await tarefaService.buscarTarefa(req,res)
         res.status(200).json(tarefas)
     }catch(erro){
-        res.status(400).json('Erro ao buscar tarefas')
+        res.status(400).json('Erro ao buscar tarefas' + erro.message)
     }
 })
 

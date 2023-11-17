@@ -6,7 +6,7 @@ const { sequelize } = require('./models')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 require('dotenv').config()
-const {verificaToken} = require('./middleware/autenticacao')
+const verificaToken = require('./middleware/autenticacao')
 //criando servidor local
 const app = express()
 const port = process.env.PORT
@@ -27,22 +27,28 @@ const routers = require('./api')
 //Configuando para manipular dados JSON
 app.use(express.json())
 
-app.all(`${process.env.API_BASE}*`, (req, res, next)=>{
-  const rotasPublicas = config.PUBLIC_ROUTES
+app.all('*', (req, res, next)=>{
+  const rotasPublicas = process.env.PUBLIC_ROUTES.split(',')
+  console.log('rotas', req.path)
+  if (req.path.startsWith('/usuarios/recuperacao/')) {
+    return next();
+  }
+
   for (let i = 0; i < rotasPublicas.length; i += 1) {
+    //console.log(rotasPublicas.length)
     if (req.path === rotasPublicas[i]) {
+      // console.log(rotasPublicas[i])
       return next()
     }
   }
   verificaToken(req, res, next)
-  
 })
 
 //Configurando para navegar quando a URL padrão for chamada
 app.use('/', routers)
 
 //Aviso que a conexão foi bem sucedida
-sequelize.sync().then(()=>{
+sequelize.sync( ).then(()=>{
   console.log('conectadado ao banco')
 })
 
