@@ -15,11 +15,11 @@ const port = process.env.PORT
 app.use(cookieParser())
 
 //Habilitar permições para urls diferentes do backend
-/*app.use(cors({
+app.use(cors({
   origin: process.env.CLIENTE_URL,
   credentials: true,
   methods: 'GET, PUT, POST, OPTIONS, DELETE',
-}))*/
+}))
 
 //Importando o arquivo de navegação pelas rotas (index.js)
 const routers = require('./api')
@@ -29,15 +29,16 @@ app.use(express.json())
 
 app.all('*', (req, res, next)=>{
   const rotasPublicas = process.env.PUBLIC_ROUTES.split(',')
-  console.log('rotas', req.path)
+  //console.log(rotasPublicas)
+  //console.log('rotas', req.path)
   if (req.path.startsWith('/usuarios/recuperacao/')) {
     return next();
   }
 
   for (let i = 0; i < rotasPublicas.length; i += 1) {
     //console.log(rotasPublicas.length)
-    if (req.path === rotasPublicas[i]) {
-      // console.log(rotasPublicas[i])
+    if (req.path == rotasPublicas[i]) {
+      //console.log(rotasPublicas[i])
       return next()
     }
   }
@@ -48,7 +49,7 @@ app.all('*', (req, res, next)=>{
 app.use('/', routers)
 
 //Aviso que a conexão foi bem sucedida
-sequelize.sync( ).then(()=>{
+sequelize.sync().then(()=>{
   console.log('conectadado ao banco')
 })
 

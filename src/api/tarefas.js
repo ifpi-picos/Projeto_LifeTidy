@@ -6,15 +6,12 @@ const router = express.Router()
 
 const tarefaService = new TarefaService(tarefa)
 
-router.get('/', async (req, res) => {
+router.get('/mostrarTarefas', async (req, res) => {
     const tarefa = await tarefaService.get()
     res.status(200).json(tarefa)
 })
 
 router.post('/adicionar', verificarToken, async (req, res) => {
-    // delete req.body.id_tarefa;
-
-    // const novaTarefa = await tarefa.create(req.body);
     const {nome_tarefa, descricao, categoria, data_inicio, data_fim, hora_inicio, hora_fim, importancia, status} = req.body
     try{
         await tarefaService.adicionarTaref({nome_tarefa, descricao, categoria, data_inicio, data_fim, hora_inicio, hora_fim, importancia, status}, req) 
@@ -25,14 +22,14 @@ router.post('/adicionar', verificarToken, async (req, res) => {
     
 })
 
-// router.delete('/apagar', async (req, res) => {
-//     const {id} = req.body
-//     try {
-//         await tarefaService.deletar(id, res)
-//     } catch (error) {
-//         res.status(400).json("Não foi possível excluir essa tarefa!")
-//     }
-// });
+router.delete('/apagar', async (req, res) => {
+    const {id} = req.body
+    try {
+        await tarefaService.deletar(id, res)
+    } catch (error) {
+        res.status(400).json("Não foi possível excluir essa tarefa!")
+    }
+});
 
 router.get('/buscarTarefas', async(req, res ) =>{
 
@@ -44,14 +41,29 @@ router.get('/buscarTarefas', async(req, res ) =>{
     }
 })
 
-router.put('/mudarNome', async (req, res) =>{
+router.put('/atualizar', async (req, res) => {
+    try {
+        const { id_tarefa, dadosAtualizados } = req.body;
+        await tarefaService.atualizarTarefa(id_tarefa, dadosAtualizados);
+        res.status(200).json('Tarefa atualizada com sucesso');
+    } catch (erro) {
+        res.status(400).json('Erro ao atualizar tarefa');
+    }
+});
+
+router.get('/desempenho', async (req, res)=>{
     try{
-        const {id_tarefa, novoNome} = req.body 
-        await tarefaService.mudarNome(id_tarefa, novoNome)
-        res.status(200).json('Nome da tarefa alterado com sucesso')
-    } catch(erro){
-        res.status(400).json('Erro ao alterar nome de tarefa')
+        const {urgente, regular, baixa} = await tarefaService.desempenho(req, res)
+        res.status(200).json({
+            urgente: `O número de tarefas categoria urgente completadas foram: ${urgente}`,
+            regular: `O número de tarefas categoria regular completadas foram: ${regular}`,
+            baixa: `O número de tarefas categoria baixa completadas foram: ${baixa}`
+        });
+    }catch(error){
+        res.status(400).json(error)
     }
 })
+
+
 
 module.exports = router

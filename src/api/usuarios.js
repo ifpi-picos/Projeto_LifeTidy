@@ -25,9 +25,7 @@ router.post('/cadastrar',
     //Validações e dos atributos dos usuarios
     body('nome_usuario').not().isEmpty().trim().escape(),
     body('email').isEmail().withMessage('Email inválido').normalizeEmail(),
-    check('senha')
-        .isLength({min: 8})
-        .withMessage('Essa senha deve ter pelo menos 8 caracteres'),
+    check('senha').isLength({min: 8}).withMessage('Essa senha deve ter pelo menos 8 caracteres'),
     async (req, res) => {
     const erros = validationResult(req)
     if (!erros.isEmpty()){
@@ -36,11 +34,13 @@ router.post('/cadastrar',
     const {nome_usuario, email, senha, telefone,} = req.body;
     try{
         await usuarioService.adicionar({nome_usuario, email, senha, telefone})
-        res.status(201).send("Usuário adicionado com sucesso")  
-    } catch (erro){
-        res.status(400).json(erro.message)
+        res.status(201).json("Usuário adicionado com sucesso")  
+    } catch (error){
+        res.status(400).json(error.message)
     }
 });
+
+
 //Rota para login
 router.post('/login', async (req, res) => {
     try {
@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
 
         // Configura o cookie com o token
         res.cookie('token', token, { maxAge: 3600000, httpOnly: true, sameSite: 'strict', secure: true});
-        res.status(200).json({ auth: true, user: userData, Token:token, message: 'Login bem sucedido!' });
+        res.status(200).json({ auth: true, Token:token, message: 'Login bem sucedido!' });
     } catch (error) {
         res.status(401).json({ error: error.message });
     }
@@ -109,9 +109,7 @@ router.put('/mudarTelefone', async (req, res)=>{
 })
 
 router.put('/mudarSenha',
-    check('novaSenha')
-    .isLength({min: 8})
-    .withMessage('Essa senha deve ter pelo menos 8 caracteres'),
+    check('novaSenha').isLength({min: 8}).withMessage('Essa senha deve ter pelo menos 8 caracteres'),
     async (req, res)=>{
     try{
         const {senhaAntiga, novaSenha} = req.body   
@@ -136,7 +134,7 @@ router.post('/recuperacao/:token', async(req, res) => {
     try {
         const { token } = req.params;
         await usuarioService.recuperacaoValidar(token);
-        //res.render('recuperacao', { token });
+        res.render('recuperacao', { token });
     } catch (error) {
         res.status(400).send(error.message);
     }
@@ -152,6 +150,14 @@ router.put('/recuperacao', async (req, res) => {
     }
 });
 
+router.post('/logout', (req, res) =>{
+    try{
+        res.clearCookie('token')
+        res.status(200).json("Logout concluído!")
+    }catch(erro){
+        res.status(500).json("Tente novamente")
+    }
+})
 // Exportando o router para ser utilizado em outros módulos
 module.exports = router 
  

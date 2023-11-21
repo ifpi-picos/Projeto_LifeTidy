@@ -27,20 +27,36 @@ const tarefa = (sequelize, DataTypes) =>{
         data_inicio:{
             type: DataTypes.DATE,
             get() {
-                const formato = this.getDataValue('data_inicio');
-                // Formate a data para o formato desejado (por exemplo, dia/mês/ano)
-                const dataFormatada = formato.toLocaleDateString('pt-BR');
-                return dataFormatada;
+                const value = this.getDataValue('data_inicio');
+                if (value != null && value != ''){
+                    const dataFormatada = value.toLocaleDateString('pt-BR')
+                    if (dataFormatada == '01/01/1000') {
+                        return '00/00/0000';
+                    }
+                    return dataFormatada
+                }
+
+                if (value == '01/01/1000' || value === '' || value === null || value === undefined) {
+                    return '00/00/0000';
+                }
             },
         },
 
         data_fim:{
             type: DataTypes.DATE,
             get() {
-                const formato = this.getDataValue('data_fim');
-                // Formate a data para o formato desejado (por exemplo, dia/mês/ano)
-                const dataFormatada = formato.toLocaleDateString('pt-BR');
-                return dataFormatada;
+                const value = this.getDataValue('data_fim');
+                if (value != null && value != ''){
+                    const dataFormatada = value.toLocaleDateString('pt-BR')
+                    if (dataFormatada == '01/01/1000') {
+                        return '00/00/0000';
+                    }
+                    return dataFormatada
+                }
+
+                if (value == '01/01/1000' || value === '' || value === null || value === undefined) {
+                    return '00/00/0000';
+                }
             },
         },
 
