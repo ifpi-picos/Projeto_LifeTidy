@@ -14,7 +14,6 @@ class TarefaService{
             for (let prop in tarefaDTO) {
                 if (tarefaDTO[prop] == '') {
                     if (prop === 'data_inicio' || prop === 'data_fim') {
-                        console.log('Foi')
                         tarefaDTO[prop] = '1000/01/01'
                     } else if (prop === 'hora_inicio' || prop === 'hora_fim') {
                         tarefaDTO[prop] = '00:00:00';
@@ -33,7 +32,7 @@ class TarefaService{
 
     async buscarTarefa(req){
         try{
-            const userId = req.userId;
+            const userId = req.userId
             const tarefas = await this.tarefa.findAll({
                 where:{
                     id_usuario: userId
@@ -47,7 +46,7 @@ class TarefaService{
     }
 
     async atualizarTarefa(id_tarefa, dadosAtualizados) {
-        const tarefa = await this.tarefa.findByPk(id_tarefa);
+        const tarefa = await this.tarefa.findByPk(id_tarefa)
     
         if (!tarefa) {
             throw new Error('Tarefa não encontrada');
@@ -56,22 +55,23 @@ class TarefaService{
         await tarefa.update(dadosAtualizados);
     }
 
-    async deletar(id, res) {
+    async deletar(req, id) {
         try {
+            const userId = req.userId
             const tarefa = await this.tarefa.findOne({
                 where: {
-                    id: id
+                    id_usuario: userId,
+                    id_tarefa: id
                 }
-            });
-    
+            })
             if (tarefa) {
-                await tarefa.destroy();
-                res.status(200).json("Tarefa excluída com sucesso.");
+                await tarefa.destroy()
+                return
             } else {
-                res.status(404).json("Tarefa não encontrada.");
+                throw new Error("Tarefa não encontrada.");
             }
         } catch (error) {
-            res.status(500).json("Não foi possível excluir, tente novamente!");
+            throw new Error("Não foi possível excluir, tente novamente!");
         }
     }
 
@@ -107,6 +107,24 @@ class TarefaService{
             return { urgente, regular, baixa };
         }catch(error){
             throw new Error('Não foi possivel realizar essa ação, tente novamente!' + error)
+        }
+    }
+
+    async tarefaConcluida( req, id_tarefa ){
+        try{
+            const userId = req.userId
+            console.log(userId)
+            const tarefa = await this.tarefa.findOne({
+                where: {
+                    id_usuario: userId,
+                    id_tarefa: id_tarefa
+                }
+            })
+            tarefa.status = 'concluida'
+            await tarefa.save()
+            return
+        }catch(error){
+            throw new Error('Erro ao tentar atualizar o status' + error)
         }
     }
 }

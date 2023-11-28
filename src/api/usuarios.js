@@ -37,6 +37,11 @@ router.post('/cadastrar',
         res.status(201).json("Usuário adicionado com sucesso")  
     } catch (error){
         res.status(400).json(error.message)
+        if(error.errors){
+            return res.status(400).json({erros:error.errors})
+        }else{
+            return res.status(400).json({erros:[{msg: error.message}]})
+        }
     }
 });
 

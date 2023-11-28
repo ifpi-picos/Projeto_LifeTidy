@@ -25,7 +25,8 @@ router.post('/adicionar', verificarToken, async (req, res) => {
 router.delete('/apagar', async (req, res) => {
     const {id} = req.body
     try {
-        await tarefaService.deletar(id, res)
+        await tarefaService.deletar(req, id)
+        res.status(200).json("Tarefa excluída com sucesso!")
     } catch (error) {
         res.status(400).json("Não foi possível excluir essa tarefa!")
     }
@@ -62,6 +63,16 @@ router.get('/desempenho', async (req, res)=>{
     }catch(error){
         res.status(400).json(error)
     }
+})
+
+router.put('/atualizarStatus', async(req, res)=>{
+    try{
+        const {id_tarefa} = req.body
+        await tarefaService.tarefaConcluida(req, id_tarefa)
+        res.status(200).json('Tarefa concluída');
+    }catch(erro){
+        res.status(400).json('Não foi possivel concluir a tarefa: ' + erro)
+    } 
 })
 
 

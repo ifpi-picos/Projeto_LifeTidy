@@ -52,6 +52,7 @@ class UsuarioService{
         })
         if (email != null){
             throw new Error('Esse email já está cadastrado!')
+            throw {errors:[{msg: 'Esse email já está cadastrado!'}]}
         }
         try{
             usuarioDTO.senha = bcrypt.hashSync(usuarioDTO.senha, SALT)
