@@ -69,9 +69,34 @@ router.put('/atualizarStatus', async(req, res)=>{
     try{
         const {id_tarefa} = req.body
         await tarefaService.tarefaConcluida(req, id_tarefa)
-        res.status(200).json('Tarefa concluída');
+        res.status(200).json('Tarefa concluída')
     }catch(erro){
         res.status(400).json('Não foi possivel concluir a tarefa: ' + erro)
+    } 
+})
+
+router.get('/buscarUrgentes', async(req, res)=>{
+    try{
+        const tarefas = await tarefaService.buscarUrgente(req)
+        res.status(200).json(tarefas)
+    }catch(erro){
+        res.status(400).json('Não foi possivel buscar tarefas: ' + erro)
+    } 
+})
+router.get('/buscarRegulares', async(req, res)=>{
+    try{
+        const tarefas = await tarefaService.buscarRegular(req)
+        res.status(200).json(tarefas)
+    }catch(erro){
+        res.status(400).json('Não foi possivel buscar tarefas: ' + erro)
+    } 
+})
+router.get('/buscarBaixas', async(req, res)=>{
+    try{
+        const tarefas = await tarefaService.buscarBaixa(req)
+        res.status(200).json(tarefas)
+    }catch(erro){
+        res.status(400).json('Não foi possivel buscar tarefas: ' + erro)
     } 
 })
 

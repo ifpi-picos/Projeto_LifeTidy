@@ -90,21 +90,21 @@ class TarefaService{
                 group: ['importancia']
             })
     
-            let urgente = 0;
-            let regular = 0;
-            let baixa = 0;
+            let urgente = 0
+            let regular = 0
+            let baixa = 0
     
             tarefas.forEach(tarefa => {
-                if(tarefa.importancia === 'urgencia') {
-                    urgente = tarefa.dataValues.count;
-                } else if(tarefa.importancia === 'regular') {
-                    regular = tarefa.dataValues.count;
-                } else if(tarefa.importancia === 'pouco-urgente') {
-                    baixa = tarefa.dataValues.count;
+                if(tarefa.importancia === 'URGENTE') {
+                    urgente = tarefa.dataValues.count
+                } else if(tarefa.importancia === 'REGULAR') {
+                    regular = tarefa.dataValues.count
+                } else if(tarefa.importancia === 'BAIXA') {
+                    baixa = tarefa.dataValues.count
                 }
-            });
+            })
     
-            return { urgente, regular, baixa };
+            return { urgente, regular, baixa }
         }catch(error){
             throw new Error('Não foi possivel realizar essa ação, tente novamente!' + error)
         }
@@ -113,7 +113,6 @@ class TarefaService{
     async tarefaConcluida( req, id_tarefa ){
         try{
             const userId = req.userId
-            console.log(userId)
             const tarefa = await this.tarefa.findOne({
                 where: {
                     id_usuario: userId,
@@ -124,7 +123,50 @@ class TarefaService{
             await tarefa.save()
             return
         }catch(error){
-            throw new Error('Erro ao tentar atualizar o status' + error)
+            throw new Error('Erro ao tentar atualizar o status: ' + error)
+        }
+    }
+
+    async buscarUrgente(req){
+        try{
+            const userId = req.userId
+            const tarefa = await this.tarefa.findAll({
+                where: {
+                    id_usuario: userId,
+                    importancia: 'URGENTE'
+                }
+            })
+            return tarefa
+        }catch(error){
+            throw new Error('Erro ao tentar buscar tarefas de importância: Urgentes: ' + error)
+        }
+    }
+    async buscarRegular(req){
+        try{
+            const userId = req.userId
+            const tarefa = await this.tarefa.findAll({
+                where: {
+                    id_usuario: userId,
+                    importancia: 'REGULAR'
+                }
+            })
+            return tarefa
+        }catch(error){
+            throw new Error('Erro ao tentar buscar tarefas de importância: Regulares: ' + error)
+        }
+    }
+    async buscarBaixa(req){
+        try{
+            const userId = req.userId
+            const tarefa = await this.tarefa.findAll({
+                where: {
+                    id_usuario: userId,
+                    importancia: 'BAIXA'
+                }
+            })
+            return tarefa
+        }catch(error){
+            throw new Error('Erro ao tentar buscar tarefas de importância: Baixa: ' + error)
         }
     }
 }
