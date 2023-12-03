@@ -32,7 +32,7 @@ const tarefa = (sequelize, DataTypes) =>{
                     const dataFormatada = value.toISOString().split('T')[0]
                     return dataFormatada === '1000-01-01'? '00/00/0000' : dataFormatada.split('-').reverse().join('/')
                 }
-        },
+        }},
 
         data_fim:{
             type: DataTypes.DATE,
@@ -61,7 +61,8 @@ const tarefa = (sequelize, DataTypes) =>{
             type:DataTypes.STRING,
         },
 
-    }, {
+    },
+    {
         createdAt: false,
         updatedAt: false,
         id:false,
