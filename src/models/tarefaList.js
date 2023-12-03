@@ -19,20 +19,22 @@ const tarefa_list = (sequelize, DataTypes) =>{
         data_inicio:{
             type: DataTypes.DATE,
             get() {
-                const formato = this.getDataValue('data_inicio');
-                // Formate a data para o formato desejado (por exemplo, dia/mês/ano)
-                const dataFormatada = formato.toLocaleDateString('pt-BR');
-                return dataFormatada;
+                const value = this.getDataValue('data_inicio');
+                if (value){
+                    const dataFormatada = value.toISOString().split('T')[0]
+                    return dataFormatada === '1000-01-01'? '00/00/0000' : dataFormatada.split('-').reverse().join('/')
+                }
             },
         },
 
         data_fim:{
             type: DataTypes.DATE,
             get() {
-                const formato = this.getDataValue('data_fim');
-                // Formate a data para o formato desejado (por exemplo, dia/mês/ano)
-                const dataFormatada = formato.toLocaleDateString('pt-BR');
-                return dataFormatada;
+                const value = this.getDataValue('data_fim');
+                if (value){
+                    const dataFormatada = value.toISOString().split('T')[0]
+                    return dataFormatada === '1000-01-01'? '00/00/0000' : dataFormatada.split('-').reverse().join('/')
+                }
             },
         },
 

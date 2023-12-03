@@ -28,34 +28,19 @@ const tarefa = (sequelize, DataTypes) =>{
             type: DataTypes.DATE,
             get() {
                 const value = this.getDataValue('data_inicio');
-                if (value != null && value != ''){
-                    const dataFormatada = value.toLocaleDateString('pt-BR')
-                    if (dataFormatada == '01/01/1000') {
-                        return '00/00/0000';
-                    }
-                    return dataFormatada
+                if (value){
+                    const dataFormatada = value.toISOString().split('T')[0]
+                    return dataFormatada === '1000-01-01'? '00/00/0000' : dataFormatada.split('-').reverse().join('/')
                 }
-
-                if (value == '01/01/1000' || value === '' || value === null || value === undefined) {
-                    return '00/00/0000';
-                }
-            },
         },
 
         data_fim:{
             type: DataTypes.DATE,
             get() {
                 const value = this.getDataValue('data_fim');
-                if (value != null && value != ''){
-                    const dataFormatada = value.toLocaleDateString('pt-BR')
-                    if (dataFormatada == '01/01/1000') {
-                        return '00/00/0000';
-                    }
-                    return dataFormatada
-                }
-
-                if (value == '01/01/1000' || value === '' || value === null || value === undefined) {
-                    return '00/00/0000';
+                if (value){
+                    const dataFormatada = value.toISOString().split('T')[0]
+                    return dataFormatada === '1000-01-01'? '00/00/0000' : dataFormatada.split('-').reverse().join('/')
                 }
             },
         },

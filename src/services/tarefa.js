@@ -119,7 +119,7 @@ class TarefaService{
                     id_tarefa: id_tarefa
                 }
             })
-            tarefa.status = 'concluida'
+            tarefa.status = req.body.status === 'concluida' ? 'concluida' : ''
             await tarefa.save()
             return
         }catch(error){
