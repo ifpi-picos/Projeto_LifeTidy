@@ -52,10 +52,10 @@ class TarefaService{
             throw new Error('Tarefa não encontrada');
         }
 
-        if (dadosAtualizados.data_inicio === '0000/00/00') {
+        if (dadosAtualizados.data_inicio === '0000-00-00') {
             dadosAtualizados.data_inicio = '1000-01-01';
         }
-        if (dadosAtualizados.data_fim === '0000/00/00') {
+        if (dadosAtualizados.data_fim === '0000-00-00') {
             dadosAtualizados.data_fim = '1000-01-01';
         }
     
