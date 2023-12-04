@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
         const { token, userData } = await usuarioService.login(email, senha);
 
         // Configura o cookie com o token
-        res.cookie('token', token, { maxAge: 3600000, httpOnly: true, sameSite: 'strict', secure: true});
+        res.cookie('token', token, { maxAge: 3600000, httpOnly: true, sameSite: 'none', secure: true});
         res.status(200).json({ auth: true, Token:token, message: 'Login bem sucedido!' });
     } catch (error) {
         res.status(401).json({ error: error.message });
