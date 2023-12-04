@@ -53,10 +53,10 @@ class TarefaService{
         }
 
         // Verifica e formata as datas
-        if (!dadosAtualizados.data_inicio || dadosAtualizados.data_inicio.trim() === '' || dadosAtualizados.data_inicio === '0000/00/00') {
+        if (!dadosAtualizados.data_inicio || dadosAtualizados.data_inicio.trim() === '' || dadosAtualizados.data_inicio == '0000-00-00') {
             dadosAtualizados.data_inicio = '1000-01-01';
         }
-        if (!dadosAtualizados.data_fim || dadosAtualizados.data_fim.trim() === '' || dadosAtualizados.data_fim === '0000/00/00') {
+        if (!dadosAtualizados.data_fim || dadosAtualizados.data_fim.trim() === '' || dadosAtualizados.data_fim == '0000-00-00') {
             dadosAtualizados.data_fim = '1000-01-01';
         }
     
