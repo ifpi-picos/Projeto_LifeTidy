@@ -2,11 +2,11 @@
 
 module.exports = {
     dialect: 'postgres',
-    host: 'db.ekiyatmaskijezlsbtwc.supabase.co',
+    host: 'isabelle.db.elephantsql.com',
     port: 5432,
-    database: 'postgres',
-    username: 'postgres',
-    password: 'H3xwKrN5bmXwiAXj',
+    database: 'jxtijrmq',
+    username: 'jxtijrmq',
+    password: 'LYS95B61eKVylI4jNz0jt9jKaOGjARMX',
     dialectOptions: {
         ssl: {
             require: true,
