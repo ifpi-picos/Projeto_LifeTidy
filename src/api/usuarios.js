@@ -21,6 +21,25 @@ router.get('/mostrarUsuarios', async (req, res) =>{
 })
 
 //Rota para cadastrar os usuarios no banco de dados 
+
+/**
+ * @swagger
+ * /cadastrar:
+ *   post:
+ *     summary: Cadastra um novo usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Usuario'
+ *     responses:
+ *       201:
+ *         description: Usuário adicionado com sucesso
+ *       400:
+ *         description: Erro ao adicionar usuário
+ */
+
 router.post('/cadastrar', 
     //Validações e dos atributos dos usuarios
     body('nome_usuario').not().isEmpty().trim().escape(),
@@ -46,6 +65,30 @@ router.post('/cadastrar',
 
 
 //Rota para login
+
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Faz login de um usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login bem sucedido
+ *       401:
+ *         description: Erro ao fazer login
+ */
+
 router.post('/login', async (req, res) => {
     try {
         const { email, senha } = req.body;
@@ -59,6 +102,26 @@ router.post('/login', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /buscarNome:
+ *   get:
+ *     summary: Busca o nome do usuário
+ *     responses:
+ *       200:
+ *         description: Nome do usuário encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 usuarioNome:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Não foi possivel acessar o nome do usuário
+ */
 router.get('/buscarNome', async (req, res)=>{
     try{
         const usuarioNome = await usuarioService.buscarNome(req)
@@ -68,6 +131,21 @@ router.get('/buscarNome', async (req, res)=>{
     }
 })
 //Rota deletar usuario
+
+/**
+ * @swagger
+ * /apagar:
+ *   delete:
+ *     summary: Deleta o usuário
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Usuário deletado com sucesso
+ *       400:
+ *         description: Não foi possível excluir o usuário
+ */
+
 router.delete('/apagar', verificaToken , async (req, res) => {
     try {
         await usuarioService.deletar(req,res)
@@ -77,6 +155,28 @@ router.delete('/apagar', verificaToken , async (req, res) => {
 });
 
 //Mudar nome de úsuario
+
+/**
+ * @swagger
+ * /mudarNome:
+ *   put:
+ *     summary: Altera o nome do usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               novoNome:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Nome do usuário alterado com sucesso
+ *       400:
+ *         description: Nome não alterado
+ */
+
 router.put('/mudarNome', async (req, res)=>{
     try{
         const novoNome = req.body
@@ -90,6 +190,29 @@ router.put('/mudarNome', async (req, res)=>{
 
 //Mudar email
 
+/**
+ * @swagger
+ * /mudarEmail:
+ *   put:
+ *     summary: Altera o email do usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               novoEmail:
+ *                 type: string
+ *               senha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email do usuário alterado com sucesso
+ *       400:
+ *         description: Email não alterado
+ */
+
 router.put('/mudarEmail',
     body('novoEmail').isEmail().normalizeEmail(),
     async (req, res)=>{
@@ -102,6 +225,27 @@ router.put('/mudarEmail',
     }
 })
 
+/**
+ * @swagger
+ * /mudarTelefone:
+ *   put:
+ *     summary: Altera o telefone do usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               novoTelefone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Telefone do usuário alterado com sucesso
+ *       400:
+ *         description: Telefone não alterado
+ */
+
 router.put('/mudarTelefone', async (req, res)=>{
     try{
         const {novoTelefone} = req.body
@@ -111,6 +255,29 @@ router.put('/mudarTelefone', async (req, res)=>{
         res.status(400).json({error: error.message})
     }
 })
+
+/**
+ * @swagger
+ * /mudarSenha:
+ *   put:
+ *     summary: Altera a senha do usuário
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               senhaAntiga:
+ *                 type: string
+ *               novaSenha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Senha do usuário alterada com sucesso
+ *       400:
+ *         description: Senha não alterada
+ */
 
 router.put('/mudarSenha',
     check('novaSenha').isLength({min: 8}).withMessage('Essa senha deve ter pelo menos 8 caracteres'),
@@ -124,6 +291,28 @@ router.put('/mudarSenha',
     }
 })
 
+/**
+ * @swagger
+ * /esqueceuSenha:
+ *   post:
+ *     summary: Envia um email para o usuário para recuperação de senha
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Um email foi enviado para o endereço de email do usuário
+ *       400:
+ *         description: Não foi possível recuperar a senha
+ */
+
+
 router.post('/esqueceuSenha', async(req, res) =>{
     const {email} = req.body
     try{
@@ -133,6 +322,24 @@ router.post('/esqueceuSenha', async(req, res) =>{
         res.status(400).json('Não foi possível recuperar a senha!')
     }
 })
+
+/**
+ * @swagger
+ * /recuperacao/{token}:
+ *   post:
+ *     summary: Valida o token de recuperação de senha e renderiza a página de recuperação
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Página de recuperação renderizada com sucesso
+ *       400:
+ *         description: Erro ao validar o token de recuperação
+ */
 
 router.post('/recuperacao/:token', async(req, res) => {
     try {
@@ -144,6 +351,29 @@ router.post('/recuperacao/:token', async(req, res) => {
     }
 })
 
+/**
+ * @swagger
+ * /recuperacao:
+ *   put:
+ *     summary: Altera a senha do usuário usando o token de recuperação
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *               novaSenha:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Senha resetada com sucesso
+ *       400:
+ *         description: Erro ao resetar a senha
+ */
+
 router.put('/recuperacao', async (req, res) => {
     const { token, novaSenha } = req.body;  
     try {
@@ -153,6 +383,18 @@ router.put('/recuperacao', async (req, res) => {
         res.status(400).send(error.message);
     }
 });
+
+/**
+ * @swagger
+ * /logout:
+ *   post:
+ *     summary: Faz logout do usuário
+ *     responses:
+ *       200:
+ *         description: Logout concluído com sucesso
+ *       500:
+ *         description: Erro ao fazer logout
+ */
 
 router.post('/logout', (req, res) =>{
     try{

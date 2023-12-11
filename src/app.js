@@ -7,6 +7,9 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 require('dotenv').config()
 const verificaToken = require('./middleware/autenticacao')
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
 //criando servidor local
 const app = express()
 const port = process.env.PORT
@@ -29,16 +32,12 @@ app.use(express.json())
 
 app.all('*', (req, res, next)=>{
   const rotasPublicas = process.env.PUBLIC_ROUTES.split(',')
-  //console.log(rotasPublicas)
-  //console.log('rotas', req.path)
   if (req.path.startsWith('/usuarios/recuperacao/')) {
     return next();
   }
 
   for (let i = 0; i < rotasPublicas.length; i += 1) {
-    //console.log(rotasPublicas.length)
     if (req.path == rotasPublicas[i]) {
-      //console.log(rotasPublicas[i])
       return next()
     }
   }
@@ -52,6 +51,24 @@ app.use('/', routers)
 sequelize.sync().then(()=>{
   console.log('conectadado ao banco')
 })
+
+// Swagger setup
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'APIs do sistema',
+      description: 'Informações das rotas de usuário e tarefas',
+      contact: {
+        name: 'Desenvolvedores Lifetidy'
+      },
+      servers: ['https://lifetidy.onrender.com']
+    }
+  },
+  apis: ['./src/api/usuario.js', './src/api/tarefas.js']
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Avisar se o servidor está rodando e em qual porta.
 app.listen(port, () => {

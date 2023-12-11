@@ -11,6 +11,43 @@ router.get('/mostrarTarefas', async (req, res) => {
     res.status(200).json(tarefa)
 })
 
+/**
+ * @swagger
+ * /adicionar:
+ *   post:
+ *     summary: Adiciona uma nova tarefa
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome_tarefa:
+ *                 type: string
+ *               descricao:
+ *                 type: string
+ *               categoria:
+ *                 type: string
+ *               data_inicio:
+ *                 type: string
+ *               data_fim:
+ *                 type: string
+ *               hora_inicio:
+ *                 type: string
+ *               hora_fim:
+ *                 type: string
+ *               importancia:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Tarefa adicionada com sucesso
+ *       400:
+ *         description: Erro ao adicionar tarefa
+ */
+
 router.post('/adicionar', verificarToken, async (req, res) => {
     const {nome_tarefa, descricao, categoria, data_inicio, data_fim, hora_inicio, hora_fim, importancia, status} = req.body
     try{
@@ -22,6 +59,27 @@ router.post('/adicionar', verificarToken, async (req, res) => {
     
 })
 
+/**
+ * @swagger
+ * /apagar:
+ *   delete:
+ *     summary: Apaga uma tarefa
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Tarefa excluída com sucesso
+ *       400:
+ *         description: Não foi possível excluir essa tarefa
+ */
+
 router.delete('/apagar', async (req, res) => {
     const {id} = req.body
     try {
@@ -31,6 +89,18 @@ router.delete('/apagar', async (req, res) => {
         res.status(400).json("Não foi possível excluir essa tarefa!")
     }
 });
+
+/**
+ * @swagger
+ * /buscarTarefas:
+ *   get:
+ *     summary: Busca todas as tarefas
+ *     responses:
+ *       200:
+ *         description: Sucesso ao buscar tarefas
+ *       400:
+ *         description: Erro ao buscar tarefas
+ */
 
 router.get('/buscarTarefas', async(req, res ) =>{
 
@@ -42,6 +112,29 @@ router.get('/buscarTarefas', async(req, res ) =>{
     }
 })
 
+/**
+ * @swagger
+ * /atualizar:
+ *   put:
+ *     summary: Atualiza uma tarefa
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id_tarefa:
+ *                 type: string
+ *               dadosAtualizados:
+ *                 type: object
+ *     responses:
+ *       200:
+ *         description: Tarefa atualizada com sucesso
+ *       400:
+ *         description: Erro ao atualizar tarefa
+ */
+
 router.put('/atualizar', async (req, res) => {
     try {
         const { id_tarefa, dadosAtualizados } = req.body;
@@ -51,6 +144,18 @@ router.put('/atualizar', async (req, res) => {
         res.status(400).json('Erro ao atualizar tarefa');
     }
 });
+
+/**
+ * @swagger
+ * /desempenho:
+ *   get:
+ *     summary: Retorna o desempenho das tarefas
+ *     responses:
+ *       200:
+ *         description: Sucesso ao buscar desempenho
+ *       400:
+ *         description: Erro ao buscar desempenho
+ */
 
 router.get('/desempenho', async (req, res)=>{
     try{
@@ -65,6 +170,27 @@ router.get('/desempenho', async (req, res)=>{
     }
 })
 
+/**
+ * @swagger
+ * /atualizarStatus:
+ *   put:
+ *     summary: Atualiza o status de uma tarefa
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id_tarefa:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Status da tarefa atualizado com sucesso
+ *       400:
+ *         description: Erro ao atualizar status da tarefa
+ */
+
 router.put('/atualizarStatus', async(req, res)=>{
     try{
         const {id_tarefa} = req.body
@@ -75,6 +201,18 @@ router.put('/atualizarStatus', async(req, res)=>{
     } 
 })
 
+/**
+ * @swagger
+ * /buscarUrgentes:
+ *   get:
+ *     summary: Busca todas as tarefas urgentes
+ *     responses:
+ *       200:
+ *         description: Sucesso ao buscar tarefas urgentes
+ *       400:
+ *         description: Erro ao buscar tarefas urgentes
+ */
+
 router.get('/buscarUrgentes', async(req, res)=>{
     try{
         const tarefas = await tarefaService.buscarUrgente(req)
@@ -83,6 +221,19 @@ router.get('/buscarUrgentes', async(req, res)=>{
         res.status(400).json('Não foi possivel buscar tarefas: ' + erro)
     } 
 })
+
+/**
+ * @swagger
+ * /buscarRegulares:
+ *   get:
+ *     summary: Busca todas as tarefas regulares
+ *     responses:
+ *       200:
+ *         description: Sucesso ao buscar tarefas regulares
+ *       400:
+ *         description: Erro ao buscar tarefas regulares
+ */
+
 router.get('/buscarRegulares', async(req, res)=>{
     try{
         const tarefas = await tarefaService.buscarRegular(req)
@@ -91,6 +242,19 @@ router.get('/buscarRegulares', async(req, res)=>{
         res.status(400).json('Não foi possivel buscar tarefas: ' + erro)
     } 
 })
+
+/**
+ * @swagger
+ * /buscarBaixas:
+ *   get:
+ *     summary: Busca todas as tarefas de baixa prioridade
+ *     responses:
+ *       200:
+ *         description: Sucesso ao buscar tarefas de baixa prioridade
+ *       400:
+ *         description: Erro ao buscar tarefas de baixa prioridade
+ */
+
 router.get('/buscarBaixas', async(req, res)=>{
     try{
         const tarefas = await tarefaService.buscarBaixa(req)
