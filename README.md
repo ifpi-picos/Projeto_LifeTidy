@@ -33,10 +33,6 @@
   José Nataniel (Product Owner/Desenvolvedor Full Stack)
 </h4>
 
-<h4>
-  Marcos Vínicius (Desenvolvedor Full Stack)
-</h4>
-
 ## Tecnologias
 <h4>
   React.js
